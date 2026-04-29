@@ -1,0 +1,198 @@
+basePath: /
+definitions:
+  model.Post:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      drawing:
+        type: string
+      id:
+        type: string
+      likes:
+        type: integer
+      status:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Send anonymous notes for everyone to read.
+  title: mota API
+  version: "1.0"
+paths:
+  /admin/posts/{id}:
+    delete:
+      description: Soft delete a post
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete post
+      tags:
+      - admin
+  /admin/reports:
+    get:
+      description: Returns all reports containing the post's content
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: object
+            type: array
+      summary: List reports
+      tags:
+      - admin
+  /posts:
+    get:
+      description: Returns paginated, approved posts.
+      parameters:
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Post'
+            type: array
+      summary: List posts
+      tags:
+      - posts
+    post:
+      consumes:
+      - application/json
+      description: Creates a post
+      parameters:
+      - description: Content
+        in: body
+        name: body
+        required: true
+        schema:
+          properties:
+            content:
+              type: string
+            drawing:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create post
+      tags:
+      - posts
+  /posts/{id}:
+    get:
+      description: Returns post by id
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Post'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get post
+      tags:
+      - posts
+  /posts/{id}/like:
+    post:
+      description: Registers like by IP
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Like
+      tags:
+      - posts
+  /posts/{id}/report:
+    post:
+      consumes:
+      - application/json
+      description: Sends a report about a post
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Reason
+        in: body
+        name: body
+        schema:
+          properties:
+            reason:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Report post
+      tags:
+      - posts
+swagger: "2.0"
