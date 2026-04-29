@@ -107,7 +107,7 @@ func Moderate(content string) Result {
 	switch {
 	case score >= 0.5:
 		return Result{true, score, "approved"}
-	case score >= 0.3:
+	case score >= 0.4:
 		return Result{true, score, "negative words detected"}
 	default:
 		return Result{false, score, "too negative"}
