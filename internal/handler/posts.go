@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+	"regexp"
 
 	"mota/internal/model"
 	"mota/internal/moderation"
@@ -74,7 +75,7 @@ func (h *PostHandler) Get(w http.ResponseWriter, r *http.Request) {
 // @Tags         posts
 // @Accept       json
 // @Produce      json
-// @Param        body  body  object{content=string,drawing=string}  true  "Content"
+// @Param        body  body  object{content=string,drawing=string,bg=string,fg=string}  true  "Content"
 // @Success      201  {object}  map[string]string
 // @Failure      400  {object}  map[string]string
 // @Router       /posts [post]
@@ -82,7 +83,11 @@ func (h *PostHandler) Create(w http.ResponseWriter, r *http.Request) {
 	var body struct {
 		Content string  `json:"content"`
 		Drawing *string `json:"drawing"`
+		BgColor string  `json:"bg"`
+		FgColor string  `json:"fg"`
 	}
+
+	hexColorRegex := regexp.MustCompile(`^#([A-Fa-f0-9]{6})$`)
 
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		writeJSON(w, 400, map[string]string{"error": "invalid JSON"})
@@ -95,6 +100,12 @@ func (h *PostHandler) Create(w http.ResponseWriter, r *http.Request) {
 	if len(body.Content) > 250 {
 		writeJSON(w, 400, map[string]string{"error": "content too long"})
 		return
+	}
+	if !hexColorRegex.MatchString(body.BgColor) {
+		body.BgColor = "#f7f19e"
+	}
+	if !hexColorRegex.MatchString(body.FgColor) {
+		body.FgColor = "#1e1f24"
 	}
 
 	result := moderation.Moderate(body.Content)
@@ -109,6 +120,8 @@ func (h *PostHandler) Create(w http.ResponseWriter, r *http.Request) {
 	post := model.Post{
 		Content: body.Content,
 		Drawing: body.Drawing,
+		BgColor: body.BgColor,
+		FgColor: body.FgColor,
 		Status:  status,
 	}
 
