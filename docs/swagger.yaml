@@ -2,11 +2,17 @@ basePath: /
 definitions:
   model.Post:
     properties:
+      bgColor:
+        description: pastel yellow
+        type: string
       content:
         type: string
       created_at:
         type: string
       drawing:
+        type: string
+      fgColor:
+        description: dark gray
         type: string
       id:
         type: string
@@ -95,9 +101,13 @@ paths:
         required: true
         schema:
           properties:
+            bg:
+              type: string
             content:
               type: string
             drawing:
+              type: string
+            fg:
               type: string
           type: object
       produces:

@@ -130,10 +130,16 @@ const docTemplate = `{
                         "schema": {
                             "type": "object",
                             "properties": {
+                                "bg": {
+                                    "type": "string"
+                                },
                                 "content": {
                                     "type": "string"
                                 },
                                 "drawing": {
+                                    "type": "string"
+                                },
+                                "fg": {
                                     "type": "string"
                                 }
                             }
@@ -285,6 +291,10 @@ const docTemplate = `{
         "model.Post": {
             "type": "object",
             "properties": {
+                "bgColor": {
+                    "description": "pastel yellow",
+                    "type": "string"
+                },
                 "content": {
                     "type": "string"
                 },
@@ -292,6 +302,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "drawing": {
+                    "type": "string"
+                },
+                "fgColor": {
+                    "description": "dark gray",
                     "type": "string"
                 },
                 "id": {
