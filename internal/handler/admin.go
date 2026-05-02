@@ -19,6 +19,7 @@ func NewAdminHandler(db *gorm.DB) *AdminHandler { return &AdminHandler{db} }
 // @Produce      json
 // @Success      200  {array}  object
 // @Router       /admin/reports [get]
+// @Security AdminKey
 func (h *AdminHandler) ListReports(w http.ResponseWriter, r *http.Request) {
 	type ReportWhitPost struct {
 		model.PostReport
@@ -44,6 +45,7 @@ func (h *AdminHandler) ListReports(w http.ResponseWriter, r *http.Request) {
 // @Success      200  {object}  map[string]string
 // @Failure      404  {object}  map[string]string
 // @Router       /admin/posts/{id} [delete]
+// @Security AdminKey
 func (h *AdminHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 
