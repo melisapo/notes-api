@@ -70,6 +70,38 @@ func (h *PostHandler) Get(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, 200, post)
 }
 
+// @Summary      Post random
+// @Description  Devuelve un post aprobado al azar
+// @Tags         posts
+// @Produce      json
+// @Success      200  {object}  model.Post
+// @Failure      404  {object}  map[string]string
+// @Router       /posts/random [get]
+func (h *PostHandler) Random(w http.ResponseWriter, r *http.Request) {
+	var post model.Post
+
+	// intenta con TABLESAMPLE primero — rápido
+	result := h.db.Raw(`
+		SELECT * FROM posts TABLESAMPLE BERNOULLI(10)
+		WHERE status = 'approved' AND deleted_at IS NULL
+		LIMIT 1
+	`).Scan(&post)
+
+	// si no encontró nada cae a ORDER BY RANDOM() — más lento pero seguro
+	if result.RowsAffected == 0 {
+		h.db.Where("status = ? AND deleted_at IS NULL", "approved").
+			Order("RANDOM()").
+			First(&post)
+	}
+
+	if post.ID == "" {
+		writeJSON(w, 404, map[string]string{"error": "no hay posts disponibles"})
+		return
+	}
+
+	writeJSON(w, 200, post)
+}
+
 // @Summary      Create post
 // @Description  Creates a post
 // @Tags         posts

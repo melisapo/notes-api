@@ -22,6 +22,9 @@ import (
 // @description     Send anonymous notes for everyone to read.
 // @host            localhost:8080
 // @BasePath        /
+// @securityDefinitions.apikey AdminKey
+// @in header
+// @name X-Admin-Key
 func main() {
 	godotenv.Load()
 
@@ -44,6 +47,7 @@ func main() {
 	// public
 	r.Get("/posts", ph.List)
 	r.Get("/posts/{id}", ph.Get)
+	r.Get("/posts/random", ph.Random)
 	r.Post("/posts", ph.Create)
 	r.Post("/posts/{id}/like", ph.Like)
 	r.Post("/posts/{id}/report", ph.Report)
