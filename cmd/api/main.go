@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"os"
 
-	"notes-api/internal/cache"
 	"notes-api/internal/db"
 	"notes-api/internal/handler"
 	mw "notes-api/internal/middleware"
@@ -34,10 +33,7 @@ func main() {
 		log.Fatal("error connecting to db: ", err)
 	}
 
-	if err := cache.Connect(); err != nil {
-		log.Fatal("error conecting to Redis:", err)
-	}
-	log.Println("Redis conected!")
+
 
 	ph := handler.NewPostHandler(database)
 	ah := handler.NewAdminHandler(database)

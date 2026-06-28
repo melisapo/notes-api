@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"time"
 
-	"notes-api/internal/cache"
+
 	"notes-api/internal/model"
 	"notes-api/internal/moderation"
 
@@ -42,11 +42,7 @@ func (h *PostHandler) List(w http.ResponseWriter, r *http.Request) {
 		page = 1
 	}
 
-	cacheKey := fmt.Sprintf("posts:list:%d", page)
 
-	if data, err := cache.Get(cacheKey); err == nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(data)
 		return
 	}
 
@@ -57,8 +53,7 @@ func (h *PostHandler) List(w http.ResponseWriter, r *http.Request) {
 		Offset((page - 1) * 20).
 		Find(&posts)
 
-	data, _ := json.Marshal(posts)
-	cache.Set(cacheKey, data, 60*time.Second)
+
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(data)
@@ -93,11 +88,9 @@ func (h *PostHandler) Get(w http.ResponseWriter, r *http.Request) {
 // @Failure      404  {object}  map[string]string
 // @Router       /posts/random [get]
 func (h *PostHandler) Random(w http.ResponseWriter, r *http.Request) {
-	cacheKey := "posts:random"
 
-	if data, err := cache.Get(cacheKey); err == nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(data)
+
+
 		return
 	}
 
@@ -120,8 +113,7 @@ func (h *PostHandler) Random(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, _ := json.Marshal(post)
-	cache.Set(cacheKey, data, 60*time.Second)
+
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(data)
@@ -186,8 +178,6 @@ func (h *PostHandler) Create(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 500, map[string]string{"error": "error while saving"})
 		return
 	}
-	cache.Del("posts:random")
-	cache.Del("posts:list:1")
 
 	msg := "your note is pending review"
 	if status == "approved" {
@@ -228,7 +218,7 @@ func (h *PostHandler) Like(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.db.Model(&model.Post{}).Where("id = ?", id).UpdateColumn("likes", gorm.Expr("likes + 1"))
-	cache.Del("posts:list:1")
+
 
 	writeJSON(w, 200, map[string]string{"message": "like registered!"})
 }
