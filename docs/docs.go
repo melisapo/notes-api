@@ -17,6 +17,11 @@ const docTemplate = `{
     "paths": {
         "/admin/posts/{id}": {
             "delete": {
+                "security": [
+                    {
+                        "AdminKey": []
+                    }
+                ],
                 "description": "Soft delete a post",
                 "produces": [
                     "application/json"
@@ -58,6 +63,11 @@ const docTemplate = `{
         },
         "/admin/reports": {
             "get": {
+                "security": [
+                    {
+                        "AdminKey": []
+                    }
+                ],
                 "description": "Returns all reports containing the post's content",
                 "produces": [
                     "application/json"
@@ -158,6 +168,35 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/posts/random": {
+            "get": {
+                "description": "Devuelve un post aprobado al azar",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Post random",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Post"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -319,6 +358,13 @@ const docTemplate = `{
                 }
             }
         }
+    },
+    "securityDefinitions": {
+        "AdminKey": {
+            "type": "apiKey",
+            "name": "X-Admin-Key",
+            "in": "header"
+        }
     }
 }`
 
@@ -328,8 +374,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:8080",
 	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "mota API",
-	Description:      "Send anonymous notes for everyone to read.",
+	Title:            "notes API",
+	Description:      "positive notes portal",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

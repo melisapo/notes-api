@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "Send anonymous notes for everyone to read.",
-        "title": "mota API",
+        "description": "Portal de notas positivas",
+        "title": "Mota API",
         "contact": {},
         "version": "1.0"
     },
@@ -11,6 +11,11 @@
     "paths": {
         "/admin/posts/{id}": {
             "delete": {
+                "security": [
+                    {
+                        "AdminKey": []
+                    }
+                ],
                 "description": "Soft delete a post",
                 "produces": [
                     "application/json"
@@ -52,6 +57,11 @@
         },
         "/admin/reports": {
             "get": {
+                "security": [
+                    {
+                        "AdminKey": []
+                    }
+                ],
                 "description": "Returns all reports containing the post's content",
                 "produces": [
                     "application/json"
@@ -152,6 +162,35 @@
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/posts/random": {
+            "get": {
+                "description": "Devuelve un post aprobado al azar",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Post random",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Post"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -312,6 +351,13 @@
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "AdminKey": {
+            "type": "apiKey",
+            "name": "X-Admin-Key",
+            "in": "header"
         }
     }
 }

@@ -12,7 +12,7 @@ type Result struct {
 }
 
 var blacklist = []string{
-	// español
+	// espanol
 	"matar", "muerte a", "odio a", "imbécil", "idiota", "estúpido", "estúpida",
 	"maldito", "maldita", "inútil", "basura", "asco", "golpear", "suicid",
 	// english
@@ -20,7 +20,7 @@ var blacklist = []string{
 }
 
 var positiveSet = map[string]bool{
-	// español
+	// espanol
 	"bien": true, "bueno": true, "buena": true, "excelente": true,
 	"amor": true, "feliz": true, "alegria": true, "esperanza": true,
 	"bonito": true, "bonita": true, "genial": true, "increible": true,
@@ -34,7 +34,7 @@ var positiveSet = map[string]bool{
 }
 
 var negativeSet = map[string]bool{
-	// español
+	// espanol
 	"malo": true, "mala": true, "terrible": true, "horrible": true,
 	"pesimo": true, "pesima": true, "triste": true, "fracaso": true,
 	"fracasado": true, "feo": true, "fea": true, "nunca": true,

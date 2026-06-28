@@ -71,7 +71,7 @@ func (h *PostHandler) Get(w http.ResponseWriter, r *http.Request) {
 }
 
 // @Summary      Post random
-// @Description  Devuelve un post aprobado al azar
+// @Description  Returns a random post
 // @Tags         posts
 // @Produce      json
 // @Success      200  {object}  model.Post
@@ -80,14 +80,12 @@ func (h *PostHandler) Get(w http.ResponseWriter, r *http.Request) {
 func (h *PostHandler) Random(w http.ResponseWriter, r *http.Request) {
 	var post model.Post
 
-	// intenta con TABLESAMPLE primero — rápido
 	result := h.db.Raw(`
 		SELECT * FROM posts TABLESAMPLE BERNOULLI(10)
 		WHERE status = 'approved' AND deleted_at IS NULL
 		LIMIT 1
 	`).Scan(&post)
 
-	// si no encontró nada cae a ORDER BY RANDOM() — más lento pero seguro
 	if result.RowsAffected == 0 {
 		h.db.Where("status = ? AND deleted_at IS NULL", "approved").
 			Order("RANDOM()").

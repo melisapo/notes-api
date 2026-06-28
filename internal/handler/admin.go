@@ -30,6 +30,7 @@ func (h *AdminHandler) ListReports(w http.ResponseWriter, r *http.Request) {
 	h.db.Table("post_reports").
 		Select("post_reports.*, posts.content").
 		Joins("JOIN posts ON posts.id = post_reports.post_id").
+		Where("posts.deleted_at IS NULL").
 		Order("post_reports.created_at desc").
 		Limit(100).
 		Scan(&reports)

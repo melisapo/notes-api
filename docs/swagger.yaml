@@ -24,8 +24,8 @@ definitions:
 host: localhost:8080
 info:
   contact: {}
-  description: Send anonymous notes for everyone to read.
-  title: mota API
+  description: Portal de notas positivas
+  title: Mota API
   version: "1.0"
 paths:
   /admin/posts/{id}:
@@ -52,6 +52,8 @@ paths:
             additionalProperties:
               type: string
             type: object
+      security:
+      - AdminKey: []
       summary: Delete post
       tags:
       - admin
@@ -67,6 +69,8 @@ paths:
             items:
               type: object
             type: array
+      security:
+      - AdminKey: []
       summary: List reports
       tags:
       - admin
@@ -205,4 +209,28 @@ paths:
       summary: Report post
       tags:
       - posts
+  /posts/random:
+    get:
+      description: Devuelve un post aprobado al azar
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Post'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Post random
+      tags:
+      - posts
+securityDefinitions:
+  AdminKey:
+    in: header
+    name: X-Admin-Key
+    type: apiKey
 swagger: "2.0"

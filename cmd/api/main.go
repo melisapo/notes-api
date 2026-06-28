@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"mota/internal/cache"
 	"mota/internal/db"
 	"mota/internal/handler"
 	mw "mota/internal/middleware"
@@ -17,9 +18,9 @@ import (
 	_ "mota/docs"
 )
 
-// @title           mota API
+// @title           notes API
 // @version         1.0
-// @description     Send anonymous notes for everyone to read.
+// @description     positive notes portal
 // @host            localhost:8080
 // @BasePath        /
 // @securityDefinitions.apikey AdminKey
@@ -32,6 +33,11 @@ func main() {
 	if err != nil {
 		log.Fatal("error connecting to db: ", err)
 	}
+
+	if err := cache.Connect(); err != nil {
+		log.Fatal("error conecting to Redis:", err)
+	}
+	log.Println("Redis conected!")
 
 	ph := handler.NewPostHandler(database)
 	ah := handler.NewAdminHandler(database)
