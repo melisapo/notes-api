@@ -2,11 +2,14 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"regexp"
+	"time"
 
-	"mota/internal/model"
-	"mota/internal/moderation"
+	"notes-api/internal/cache"
+	"notes-api/internal/model"
+	"notes-api/internal/moderation"
 
 	"github.com/go-chi/chi/v5"
 	"gorm.io/gorm"
@@ -39,6 +42,14 @@ func (h *PostHandler) List(w http.ResponseWriter, r *http.Request) {
 		page = 1
 	}
 
+	cacheKey := fmt.Sprintf("posts:list:%d", page)
+
+	if data, err := cache.Get(cacheKey); err == nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(data)
+		return
+	}
+
 	var posts []model.Post
 	h.db.Where("status = ?", "approved").
 		Order("created_at desc").
@@ -46,7 +57,11 @@ func (h *PostHandler) List(w http.ResponseWriter, r *http.Request) {
 		Offset((page - 1) * 20).
 		Find(&posts)
 
-	writeJSON(w, 200, posts)
+	data, _ := json.Marshal(posts)
+	cache.Set(cacheKey, data, 60*time.Second)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(data)
 }
 
 // @Summary      Get post
@@ -78,6 +93,14 @@ func (h *PostHandler) Get(w http.ResponseWriter, r *http.Request) {
 // @Failure      404  {object}  map[string]string
 // @Router       /posts/random [get]
 func (h *PostHandler) Random(w http.ResponseWriter, r *http.Request) {
+	cacheKey := "posts:random"
+
+	if data, err := cache.Get(cacheKey); err == nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(data)
+		return
+	}
+
 	var post model.Post
 
 	result := h.db.Raw(`
@@ -93,11 +116,15 @@ func (h *PostHandler) Random(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if post.ID == "" {
-		writeJSON(w, 404, map[string]string{"error": "no hay posts disponibles"})
+		writeJSON(w, 404, map[string]string{"error": "posts not found"})
 		return
 	}
 
-	writeJSON(w, 200, post)
+	data, _ := json.Marshal(post)
+	cache.Set(cacheKey, data, 60*time.Second)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(data)
 }
 
 // @Summary      Create post
@@ -159,6 +186,8 @@ func (h *PostHandler) Create(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 500, map[string]string{"error": "error while saving"})
 		return
 	}
+	cache.Del("posts:random")
+	cache.Del("posts:list:1")
 
 	msg := "your note is pending review"
 	if status == "approved" {
@@ -172,6 +201,7 @@ func (h *PostHandler) Create(w http.ResponseWriter, r *http.Request) {
 		"status":  status,
 		"message": msg,
 	})
+
 }
 
 // @Summary      Like
@@ -198,6 +228,7 @@ func (h *PostHandler) Like(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.db.Model(&model.Post{}).Where("id = ?", id).UpdateColumn("likes", gorm.Expr("likes + 1"))
+	cache.Del("posts:list:1")
 
 	writeJSON(w, 200, map[string]string{"message": "like registered!"})
 }

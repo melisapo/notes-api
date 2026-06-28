@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"mota/internal/model"
+	"notes-api/internal/model"
 
 	"github.com/go-chi/chi/v5"
 	"gorm.io/gorm"

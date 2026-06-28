@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
-	"mota/internal/model"
+	"notes-api/internal/model"
 )
 
 func Connect() (*gorm.DB, error) {

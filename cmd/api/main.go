@@ -5,17 +5,17 @@ import (
 	"net/http"
 	"os"
 
-	"mota/internal/cache"
-	"mota/internal/db"
-	"mota/internal/handler"
-	mw "mota/internal/middleware"
+	"notes-api/internal/cache"
+	"notes-api/internal/db"
+	"notes-api/internal/handler"
+	mw "notes-api/internal/middleware"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
 	httpSwagger "github.com/swaggo/http-swagger"
 
-	_ "mota/docs"
+	_ "notes-api/docs"
 )
 
 // @title           notes API
