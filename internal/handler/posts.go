@@ -2,11 +2,8 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"regexp"
-	"time"
-
 
 	"notes-api/internal/model"
 	"notes-api/internal/moderation"
@@ -42,10 +39,6 @@ func (h *PostHandler) List(w http.ResponseWriter, r *http.Request) {
 		page = 1
 	}
 
-
-		return
-	}
-
 	var posts []model.Post
 	h.db.Where("status = ?", "approved").
 		Order("created_at desc").
@@ -53,10 +46,7 @@ func (h *PostHandler) List(w http.ResponseWriter, r *http.Request) {
 		Offset((page - 1) * 20).
 		Find(&posts)
 
-
-
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(data)
 }
 
 // @Summary      Get post
@@ -88,12 +78,6 @@ func (h *PostHandler) Get(w http.ResponseWriter, r *http.Request) {
 // @Failure      404  {object}  map[string]string
 // @Router       /posts/random [get]
 func (h *PostHandler) Random(w http.ResponseWriter, r *http.Request) {
-
-
-
-		return
-	}
-
 	var post model.Post
 
 	result := h.db.Raw(`
@@ -113,10 +97,7 @@ func (h *PostHandler) Random(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
-
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(data)
 }
 
 // @Summary      Create post
@@ -191,7 +172,6 @@ func (h *PostHandler) Create(w http.ResponseWriter, r *http.Request) {
 		"status":  status,
 		"message": msg,
 	})
-
 }
 
 // @Summary      Like
@@ -218,7 +198,6 @@ func (h *PostHandler) Like(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.db.Model(&model.Post{}).Where("id = ?", id).UpdateColumn("likes", gorm.Expr("likes + 1"))
-
 
 	writeJSON(w, 200, map[string]string{"message": "like registered!"})
 }
