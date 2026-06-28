@@ -20,7 +20,7 @@ import (
 // @title           notes API
 // @version         1.0
 // @description     positive notes portal
-// @host            localhost:8080
+// @host            https://notes-api-q7ki.onrender.com
 // @BasePath        /
 // @securityDefinitions.apikey AdminKey
 // @in header
@@ -32,8 +32,6 @@ func main() {
 	if err != nil {
 		log.Fatal("error connecting to db: ", err)
 	}
-
-
 
 	ph := handler.NewPostHandler(database)
 	ah := handler.NewAdminHandler(database)

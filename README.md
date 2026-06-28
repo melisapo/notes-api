@@ -25,4 +25,4 @@ Requires `X-Admin-Key` header.
 | `DELETE` | `/admin/posts/{id}` | Delete a post |
 
 ## Docs
-Swagger UI available at `/swagger/index.html`.
+Swagger UI available at https://notes-api-q7ki.onrender.com/swagger/index.html.
